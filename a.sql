@@ -13,6 +13,8 @@ set hive.merge.mapredfiles=true;
 set hive.merge.size.per.task=128000000;
 set hive.merge.smallfiles.avgsize=128000000;
 
+DROP TABLE IF EXISTS adhoc_analysis.temp_ttl;
+
 CREATE TABLE adhoc_analysis.temp_ttl AS
 SELECT tt1.shipment_id,
        MIN(
