@@ -13,8 +13,6 @@ set hive.merge.mapredfiles=true;
 set hive.merge.size.per.task=128000000;
 set hive.merge.smallfiles.avgsize=128000000;
 
-DROP TABLE IF EXISTS adhoc_analysis.temp_ttl;
-
 CREATE TABLE adhoc_analysis.temp_ttl AS
 SELECT tt1.shipment_id,
        MIN(
@@ -39,12 +37,13 @@ LEFT JOIN (
                    status,
                    cast(created_on as timestamp) as created_on
             FROM pe_logistics_bolt_production_trip_service.trip_task_logs_snapshot_nrt
-            WHERE dt >= date_sub(current_date(),60)
+            WHERE cast(created_on as timestamp) >= date_sub(current_date(),60)
+              AND dt >= date_sub(current_date(),60)
           ) ttl1
 
 ON tt1.task_id = ttl1.task_id
 
-WHERE tt1.dt >= date_sub(current_date(),60)
+WHERE cast(tt1.created_on as timestamp) >= date_sub(current_date(),60)
 
 GROUP BY tt1.shipment_id;
 
